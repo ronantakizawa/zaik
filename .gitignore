@@ -1,0 +1,129 @@
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Risc0 build artifacts
+methods/target/
+methods/guest/target/
+*.elf
+*.bin
+receipt.bin
+
+# Large binary files
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# Generated files
+/methods/src/lib.rs
+out/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Python (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Large test files
+*.csv.large
+test_data_huge.csv
+large_dataset.csv
+
+# Proof artifacts that might be large
+*.proof
+*.receipt
+proofs/
+receipts/
+
+# Compiled circuits
+*.r1cs
+*.wasm
+*.zkey
+*.ptau
+
+# Cache directories
+.cache/
+cache/
+
+# Documentation build
+docs/_build/
+site/
+
+# Coverage reports
+coverage/
+*.coverage
+.nyc_output
+.coverage.*
+
+# Dependency directories
+vendor/
+
+# Large AI model files
+*.model
+*.weights
+models/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3

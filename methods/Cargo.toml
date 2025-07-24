@@ -1,0 +1,11 @@
+[package]
+name = "methods"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+risc0-build = "1.0"
+
+[[bin]]
+name = "csv_processor"
+path = "guest/src/main.rs"

@@ -1,0 +1,53 @@
+[package]
+name = "zkvm-verifier"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+risc0-zkvm = { version = "1.0", features = ["prove", "std"] }
+risc0-build = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+sha2 = "0.10"
+csv = "1.3"
+tokio = { version = "1.0", features = ["full"] }
+anyhow = "1.0"
+bincode = "1.3"
+reqwest = { version = "0.11", features = ["json"] }
+uuid = { version = "1.0", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+dotenv = "0.15"
+ark-ff = "0.4"
+ark-ec = "0.4"
+ark-std = "0.4"
+ark-bn254 = "0.4"
+ark-groth16 = "0.4"
+ark-relations = "0.4"
+ark-r1cs-std = "0.4"
+ark-crypto-primitives = "0.4"
+
+[build-dependencies]
+risc0-build = "1.0"
+
+[[bin]]
+name = "host"
+path = "src/bin/host.rs"
+
+[[bin]]
+name = "verifier"
+path = "src/bin/verifier.rs"
+
+[[bin]]
+name = "snark_verifier"
+path = "src/bin/snark_verifier.rs"
+
+[[bin]]
+name = "ai_agent_test"
+path = "src/bin/ai_agent_test.rs"
+
+[[bin]]
+name = "ai_interactive"
+path = "src/bin/ai_interactive.rs"
+
+[[bin]]
+name = "ai_demo_simple"
+path = "src/bin/ai_demo_simple.rs"
