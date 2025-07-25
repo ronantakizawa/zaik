@@ -1,5 +1,3 @@
-mod snark_invariant;
-
 use methods::{
     GUEST_CODE_FOR_ZK_PROOF_ELF, GUEST_CODE_FOR_ZK_PROOF_ID
 };
@@ -7,7 +5,6 @@ use risc0_zkvm::{default_prover, ExecutorEnv, Receipt};
 use serde::{Deserialize, Serialize};
 use sha2::{Sha256, Digest};
 use std::fs;
-use snark_invariant::{BusinessInvariantCircuit, BusinessInvariantProof};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct CsvProcessingInput {
@@ -29,7 +26,6 @@ struct VerificationResult {
     verification_passed: bool,
     business_invariant_passed: bool,
     sum_threshold: u64,
-    snark_proof: Option<BusinessInvariantProof>,
 }
 
 struct AgentA;
@@ -71,7 +67,7 @@ impl AgentA {
 }
 
 impl AgentB {
-    fn verify_and_check_invariant(receipt: &Receipt, sum_threshold: u64, use_snark: bool) -> Result<VerificationResult, Box<dyn std::error::Error>> {
+    fn verify_and_check_invariant(receipt: &Receipt, sum_threshold: u64) -> Result<VerificationResult, Box<dyn std::error::Error>> {
         println!("🔍 Agent B: Verifying receipt and checking business invariant...");
         
         // Verify the receipt
@@ -93,39 +89,11 @@ impl AgentB {
                 sum_threshold, 
                 if business_invariant_passed { "PASSED" } else { "FAILED" });
         
-        // Optional: Generate and verify SNARK proof for business invariant
-        let snark_proof = if use_snark {
-            println!("🔒 Generating custom SNARK for business invariant...");
-            
-            let circuit = BusinessInvariantCircuit::new(
-                sum_threshold,
-                result.column_a_sum,
-                result.csv_hash
-            );
-            
-            let proof = circuit.generate_proof();
-            println!("✨ SNARK proof generated!");
-            
-            // Verify SNARK proof
-            let snark_valid = proof.verify();
-            println!("🔐 SNARK verification: {}", if snark_valid { "PASSED" } else { "FAILED" });
-            
-            let (public_threshold, public_csv_hash) = proof.get_public_inputs();
-            println!("📋 SNARK public inputs:");
-            println!("  - Threshold: {}", public_threshold);
-            println!("  - CSV hash: {}", hex::encode(public_csv_hash));
-            
-            Some(proof)
-        } else {
-            None
-        };
-        
         Ok(VerificationResult {
             result,
             verification_passed,
             business_invariant_passed,
             sum_threshold,
-            snark_proof,
         })
     }
 }
@@ -142,7 +110,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Configuration
     let csv_file_path = "test_data.csv";
     let sum_threshold = 1000u64; // Business invariant: sum must be <= 1000
-    let use_snark = true; // Enable custom SNARK for business invariant
     
     // Agent A: Process CSV and generate proof
     let receipt = AgentA::process_csv(csv_file_path)?;
@@ -151,7 +118,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  - Receipt generated successfully");
     
     // Agent B: Verify receipt and check business invariant
-    let verification_result = AgentB::verify_and_check_invariant(&receipt, sum_threshold, use_snark)?;
+    let verification_result = AgentB::verify_and_check_invariant(&receipt, sum_threshold)?;
     
     println!("\n🎯 Final Results:");
     println!("==================");
@@ -161,19 +128,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
              verification_result.result.column_a_sum, 
              verification_result.sum_threshold);
     
-    if let Some(snark_proof) = &verification_result.snark_proof {
-        println!("✅ Custom SNARK verification: {}", snark_proof.verify());
-        println!("🔒 SNARK proof hash: {}", hex::encode(snark_proof.proof_hash));
-    }
-    
     let all_checks_passed = verification_result.verification_passed 
-        && verification_result.business_invariant_passed
-        && verification_result.snark_proof.as_ref().map_or(true, |p| p.verify());
+        && verification_result.business_invariant_passed;
     
     if all_checks_passed {
         println!("🎉 SUCCESS: All checks passed!");
         println!("   - ✅ Deterministic execution proven with RISC Zero zkVM");
-        println!("   - ✅ Business invariant enforced with custom SNARK");
+        println!("   - ✅ Business invariant verified within zkVM");
         println!("   - ✅ CSV processing completed trustlessly");
     } else {
         println!("❌ FAILURE: Some checks failed!");

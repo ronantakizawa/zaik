@@ -15,14 +15,14 @@ This project implements the requirements:
 **Architecture**:
 - **Agent A**: Processes CSV data inside RISC Zero zkVM, generates execution proof
 - **Agent B**: Verifies proof and validates business constraints
-- **Custom SNARK**: Enforces business invariant (sum must be ≤ threshold)
+- **zkVM Verification**: All business logic verified within the zero-knowledge execution
 
 ## Features
 
 ✅ **Deterministic Execution**: No network calls, fully deterministic processing  
 ✅ **Full Execution Proof**: RISC Zero zkVM proves correct computation  
 ✅ **CSV Integrity**: SHA256 verification ensures data hasn't been tampered with  
-✅ **Business Logic**: Custom SNARK enforces sum threshold constraints  
+✅ **Business Logic**: Threshold constraints verified within zkVM execution  
 ✅ **Agent Architecture**: Clear separation between processing (A) and verification (B)
 
 ## Project Structure
@@ -30,8 +30,7 @@ This project implements the requirements:
 ```
 ├── host/               # Host application (Agent A & B)
 │   └── src/
-│       ├── main.rs            # Main execution logic
-│       └── snark_invariant.rs # Custom SNARK implementation
+│       └── main.rs            # Main execution logic
 ├── methods/            # RISC Zero methods
 │   └── guest/          # Guest code (runs inside zkVM)
 │       └── src/main.rs        # CSV processing logic
@@ -82,10 +81,10 @@ RISC0_DEV_MODE=1 RUST_LOG=info RISC0_INFO=1 cargo run --release
 - Checks business invariant (sum ≤ threshold)
 - Optionally generates custom SNARK for additional constraints
 
-### Step 3: Custom SNARK (Optional)
-- Creates zero-knowledge proof that sum ≤ threshold
-- Keeps actual sum private while proving constraint satisfaction
-- Provides additional cryptographic guarantee beyond zkVM proof
+### Step 3: Business Logic Verification
+- All business logic (including threshold checking) verified within zkVM
+- Single comprehensive proof covers all computation aspects
+- No additional cryptographic overhead needed
 
 ## Test Data
 
